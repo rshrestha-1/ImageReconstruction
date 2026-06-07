@@ -180,9 +180,9 @@ set(gca, 'YDir', 'reverse')
 colormap gray
 caxis([-dynamic_range_dB 0])
 
-% =========================================================
+
 % SHARED LABELS + FORMATTING
-% =========================================================
+
 
 % Shared X label
 xlabel(t,'Lateral (mm)','FontSize',13)
@@ -197,9 +197,9 @@ cb.FontSize = 12;
 ax = findall(gcf,'Type','axes');
 set(ax,'FontSize',12)
 
-% =========================================================
+
 % FINAL VISUAL TIDYING (ALIGN Y LABELS)
-% =========================================================
+
 ax = findall(gcf,'Type','axes');
 
 for i = 1:length(ax)
