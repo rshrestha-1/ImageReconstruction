@@ -1,0 +1,35 @@
+%% Optimising lambda
+
+% Define ROI for letter
+ROI_letter = false(Nx,Ny,Nz); % 3D array of volume Nx Ny Nz = filled with false
+ROI_letter(20:35,25:40,10:20) = true; % region containing letters (becomes true)
+
+% Define ROI for background
+ROI_background = false(Nx,Ny,Nz); % same imaging volume set to false
+ROI_background(1:15,1:15,1:10) = true;% set corner of volume with no object for background intensity
+
+% Return index of positions where true
+roi_letter_idx = find(ROI_letter);
+roi_bg_idx = find(ROI_background);
+
+% Compute average letter intensity
+I_letter = mean(abs(v(roi_letter_idx)));
+I_bg = mean(abs(v(roi_bg_idx)));
+
+% Sweep lambda values
+lambdas = logspace(-5,0,20);
+
+for i = 1:length(lambdas)
+    % Apply TwIST at the lambda i for 100 iterations
+    v = twist_bpdn(H,u,lambdas(i),100);
+    
+    % Compute average letter intensity
+    I_letter = mean(abs(v(roi_letter_idx)));
+    I_bg = mean(abs(v(roi_bg_idx)));
+
+    % Compute contrast and store per lambda
+    contrast(i) = 20*log10(I_letter/I_bg);
+end
+
+[best_contrast,idx] = max(contrast);
+best_lambda = lambdas(idx);
