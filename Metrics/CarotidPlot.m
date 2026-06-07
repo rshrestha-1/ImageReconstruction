@@ -42,9 +42,8 @@ figure;
 
 t = tiledlayout(2,2,'TileSpacing','compact','Padding','loose');
 
-% =========================================================
 % TOP ROW — GROUND TRUTH
-% =========================================================
+
 
 % --- YZ (left) ---
 % --- First slice (z = 1) instead of YZ MIP ---
@@ -74,9 +73,7 @@ caxis([-dynamic_range_dB 0])
 %text(0.5,1.05,'\bf Ground Truth','Units','normalized', ...
     %'HorizontalAlignment','center','Parent',ax1,'FontSize',14)
 
-% =========================================================
 % BOTTOM ROW — RECONSTRUCTION
-% =========================================================
 
 % --- YZ (left) ---
 ax3 = nexttile(3);
@@ -106,18 +103,14 @@ xlabel('Lateral (mm)','FontSize',12)
 %text(0.5,1.05,'\bf Reconstruction','Units','normalized', ...
     %'HorizontalAlignment','center','Parent',ax3,'FontSize',14)
 
-% =========================================================
 % COLORBAR (FULL HEIGHT)
-% =========================================================
 
 cb = colorbar;
 cb.Layout.Tile = 'east';
 ylabel(cb,'Intensity (dB)','FontSize',12)
 cb.FontSize = 12;
 
-% =========================================================
 % ALIGN Y-LABELS NICELY (LEFT COLUMN ONLY)
-% =========================================================
 
 for ax = [ax1, ax3]
     ax.YLabel.Units = 'normalized';
@@ -125,16 +118,10 @@ for ax = [ax1, ax3]
     ax.YLabel.Position(2) = 0.5;
 end
 
-% =========================================================
-% FONT CONSISTENCY
-% =========================================================
 
 all_axes = findall(gcf,'Type','axes');
 set(all_axes,'FontSize',12)
 
-% =========================================================
-% ROW TITLES (FIXED & STABLE)
-% =========================================================
 
 % Get positions (normalized to figure)
 pos1 = ax1.Position; % top-left
@@ -156,9 +143,6 @@ bottom_row_top = pos3(2) + pos3(4);
 
 gap_center = (top_row_top + bottom_row_top) / 2;
 
-% =========================================================
-% TITLES (TINY CONTROLLED GAP)
-% =========================================================
 
 % Ground Truth (slightly above top row)
 annotation('textbox', ...
@@ -175,12 +159,9 @@ annotation('textbox', ...
     'HorizontalAlignment','center', ...
     'FontSize',14, ...
     'FitBoxToText','off');
-% =========================================================
 drawnow;
 
-% =========================================================
-% CREATE SMALL EXTRA ROW GAP (SAFE METHOD)
-% =========================================================
+
 
 shrink = 0.92;  % <-- control gap here (0.90–0.95 recommended)
 
@@ -196,9 +177,7 @@ for ax = [ax1, ax2, ax3, ax4]
     
     ax.Position = p;
 end
-% =========================================================
-% ADJUST COLUMN WIDTHS (LEFT SMALLER, RIGHT LARGER)
-% =========================================================
+
 
 scale_left  = 0.6;  % shrink left plots (try 0.8–0.9)
 scale_right = 1.50;  % expand right plots (try 1.05–1.15)
