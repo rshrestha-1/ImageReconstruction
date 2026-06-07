@@ -19,8 +19,8 @@ project-root/
 │── PINNs/
 │── ezdaSS/
 │── figures/
-│── requirements.txt
 │── README.md
+│── requirements.txt
 ```
 
 ### Folder Overview
