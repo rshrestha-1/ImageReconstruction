@@ -59,9 +59,7 @@ figure
 t = tiledlayout(2,3,'TileSpacing','compact','Padding','compact');
 t.Padding = 'loose'; % gives space for labels
 
-% =========================================================
 % LEFT COLUMN — GROUND TRUTH
-% =========================================================
 
 nexttile(1)
 imagesc(x_range*1e3, y_range*1e3, mip_xy_db1.')
@@ -96,9 +94,8 @@ set(gca, 'YDir', 'reverse')
 colormap gray
 caxis([-dynamic_range_dB 0])
 %ylabel('Depth (mm)','FontSize',12)
-% =========================================================
+
 % RIGHT COLUMN — RECONSTRUCTED
-% =========================================================
 
 nexttile(3)
 imagesc(x_range*1e3, y_range*1e3, mip_xy_db.')
@@ -115,9 +112,7 @@ set(gca, 'YDir', 'reverse')
 colormap gray
 caxis([-dynamic_range_dB 0])
 
-% =========================================================
 % SHARED LABELS + FORMATTING
-% =========================================================
 
 % Shared X label
 xlabel(t,'Lateral (mm)','FontSize',13)
@@ -132,9 +127,7 @@ cb.FontSize = 12;
 ax = findall(gcf,'Type','axes');
 set(ax,'FontSize',12)
 
-% =========================================================
 % FINAL VISUAL TIDYING (ALIGN Y LABELS)
-% =========================================================
 ax = findall(gcf,'Type','axes');
 
 for i = 1:length(ax)
