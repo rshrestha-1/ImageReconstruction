@@ -10,8 +10,8 @@ The repository is organised into separate packages for various stages and aims o
 
 ```text
 project-root/
-│── data/
-│── preprocessing/
+│── 2d_das/
+│── 3D_trials/
 │── reconstruction/
 │── models/
 │── evaluation/
@@ -27,14 +27,11 @@ project-root/
 
 ### Folder Overview
 
-#### `/data`
-Description of what is stored here.
+#### `/2d_das`
+Contains testing from the 2D DAS reconstruction period early on within autumm, requires installation of MUST modules.
 
-Example:
-Contains datasets used for training, testing, or reconstruction. This may include raw images, processed images, and sample inputs. Large datasets may be excluded from GitHub and accessed separately.
-
-#### `/preprocessing`
-Description.
+#### `/3D_trials`
+Contains testing from 3D DAS and moving into 3D reconstruction territory also early on, with initial trial u, H, v data.
 
 Example:
 Contains scripts for image cleaning, normalisation, resizing, filtering, augmentation, or preparing input data before reconstruction.
