@@ -63,7 +63,7 @@ Contains figure visualisation code. Contains plotting scripts and tools for disp
 
 ## Dependencies
 
-- Python `x.x`
+- Python `3.13`
 - NumPy
 - SciPy
 - PyTorch
