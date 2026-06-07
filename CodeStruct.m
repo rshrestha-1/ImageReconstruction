@@ -69,7 +69,7 @@ f_high = 13e6;
 u_filt = filtfilt(b,a,u);
 u_filt = smoothdata(u_filt, 'gaussian', 5);
 %u_filt = u_filt / max(abs(u_filt));
-%% 5. LSQR
+%% LSQR
 tol = 1e-6;
 maxit = 15;
 
@@ -123,7 +123,8 @@ tol = 1e-6;
 
 [v, cost] = twist_elastic(Hn_norm, u_n, lambda1, lambda2, maxIter, tol);
 volume = reshape(v,Nx,Ny,Nz);
-%% 
+
+%% Avoid for Integrity to Recon
 
 % Threshold
 v(abs(v) < 0.05*max(abs(v))) = 0;
