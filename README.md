@@ -14,9 +14,9 @@ project-root/
 │── Algorithms/
 │── Execution/
 │── Experimental/
-│── visualisation/
-│── utils/
-│── notebooks/
+│── February/
+│── MUST/
+│── PINNs/
 │── results/
 │── docs/
 │── main.py
@@ -50,23 +50,17 @@ Contains code for processing the limited experimental data. Includes ASA.
 Example:
 Scripts for assessing reconstruction quality using metrics such as PSNR, SSIM, MSE, or qualitative comparisons.
 
-#### `/visualisation`
-Description.
+#### `/February`
+Contains scripts to debug and run the original code written up prior to receiving data, once the first sets of simulation data was being provided.
 
 Example:
 Contains plotting scripts and tools for displaying reconstructed images, comparisons, graphs, and performance metrics.
 
-#### `/utils`
-Description.
+#### `/MUST`
+Helper functions from MUST shared across the repository.
 
-Example:
-Helper functions and reusable utilities shared across the repository (e.g., file loading, image operations, common processing functions).
-
-#### `/notebooks`
-Description.
-
-Example:
-Jupyter notebooks used for experimentation, testing ideas, and exploratory analysis.
+#### `/PINNs`
+Contains the Python scripts to run PINNs to extrapolate/interpolate the limited experimental data. Includes versions with/without ffe; extraction with .mat/.hpst; reduced hidden layers etc. to reduce running burdens.
 
 #### `/results`
 Description.
