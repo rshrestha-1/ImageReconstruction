@@ -16,6 +16,7 @@ project-root/
 │── Experimental/
 │── February/
 │── MUST/
+│── Metrics/
 │── PINNs/
 │── ezdaSS/
 │── figures/
@@ -40,17 +41,14 @@ Scripts used to execute the reconstruction algorithms. MATLAB sections numbered 
 #### `/Experimental`
 Contains code for processing the limited experimental data. Includes ASA.
 
-Example:
-Scripts for assessing reconstruction quality using metrics such as PSNR, SSIM, MSE, or qualitative comparisons.
-
 #### `/February`
 Contains scripts to debug and run the original code written up prior to receiving data, once the first sets of simulation data was being provided.
 
-Example:
-Contains plotting scripts and tools for displaying reconstructed images, comparisons, graphs, and performance metrics.
-
 #### `/MUST`
 Helper functions from MUST shared across the repository.
+
+#### `/Metrics`
+Scripts for assessing reconstruction quality using metrics such as SNR, SSIM, MSE, and graphs.
 
 #### `/PINNs`
 Contains the Python scripts to run PINNs to extrapolate/interpolate the limited experimental data. Includes versions with/without ffe; extraction with .mat/HDF5; reduced hidden layers/adaptive physics loss weight etc. to reduce instability burdens. Stores model architectures.
@@ -59,7 +57,7 @@ Contains the Python scripts to run PINNs to extrapolate/interpolate the limited 
 Contains further MUST modules.
 
 #### `/figures`
-Contains figure visualisation code.
+Contains figure visualisation code. Contains plotting scripts and tools for displaying reconstructed images/comparisons.
 
 ---
 
