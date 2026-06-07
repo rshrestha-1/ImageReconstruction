@@ -19,6 +19,7 @@ project-root/
 │── PINNs/
 │── ezdaSS/
 │── figures/
+│── requirements.txt
 │── README.md
 ```
 
@@ -52,7 +53,7 @@ Contains plotting scripts and tools for displaying reconstructed images, compari
 Helper functions from MUST shared across the repository.
 
 #### `/PINNs`
-Contains the Python scripts to run PINNs to extrapolate/interpolate the limited experimental data. Includes versions with/without ffe; extraction with .mat/HDF5; reduced hidden layers/encoded etc. to reduce instability burdens. Stores model architectures.
+Contains the Python scripts to run PINNs to extrapolate/interpolate the limited experimental data. Includes versions with/without ffe; extraction with .mat/HDF5; reduced hidden layers/adaptive physics loss weight etc. to reduce instability burdens. Stores model architectures.
 
 #### `/ezdaSS`
 Contains further MUST modules.
