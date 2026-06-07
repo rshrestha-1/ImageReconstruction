@@ -1,4 +1,4 @@
-%% FIRST HAVE u and H in workspace
+%% u and H in workspace
 load('/Users/rebeccashrestha/Library/CloudStorage/OneDrive-ImperialCollegeLondon/DAPP/Y3/Matlab/Sensor data/H_slice.mat')
 load('/Users/rebeccashrestha/Library/CloudStorage/OneDrive-ImperialCollegeLondon/DAPP/Y3/Matlab/Sensor data/H_f.mat')
 load('/Users/rebeccashrestha/Library/CloudStorage/OneDrive-ImperialCollegeLondon/DAPP/Y3/Matlab/Sensor data/H_fresh.mat')
@@ -24,12 +24,13 @@ tol = 1e-6;
 u = udata_logo;
 
 v = lsqr(H,u,tol,maxIter); % lsqr solution at 18 iterations
-%% Quick autoconvolution
+%% Return from external autoconvolution
 
 H_conv = ifft2( fft2(H_f) .* fft2(H_f) );
 H_conv = real(H_conv);
 
-v = lsqr(H_conv, udata_logo, tol, maxIter);
+v = lsqr(H, udata_logo, tol, maxIter);
+
 %% Filter image u
 
 fs = 30e6; % sampling frequency        
@@ -39,6 +40,7 @@ f_h = 12e6;
 bpFilt = designfilt('bandpassiir', 'FilterOrder', 6, 'HalfPowerFrequency1', f_l, 'HalfPowerFrequency2', f_h, 'SampleRate', fs);
 
 u_filt = filtfilt(bpFilt, u); % apply bandpass filter
+
 %% Define voxel coordinates
 
 % Define number of voxels
@@ -104,7 +106,7 @@ end
 colormap gray;
 sgtitle(sprintf('LSQR Reconstruction (Iteration = %d)', maxIter));
 colorbar;
-%% Interactive Scroll through slices
+%% Multiple slices
 
 figure;
 for k = 1:Nz
@@ -115,7 +117,7 @@ for k = 1:Nz
     title(sprintf('Z-slice %d / %d', k, Nz));
     xlabel('x (mm)');
     ylabel('y (mm)');
-    pause(0.3);  % adjust speed
+    pause(0.3);  % speed
 end
 
 %% log compressed bit
@@ -143,7 +145,7 @@ end
 
 % Normalised values
 v_vol_norm = abs(v_vol);            % magnitude of complex signals
-v_vol_norm = v_vol_norm / max(v_vol_norm(:));  % scale 0..1
+v_vol_norm = v_vol_norm / max(v_vol_norm(:)); 
 
 % v_vol_norm(:) = normalized intensity values
 
