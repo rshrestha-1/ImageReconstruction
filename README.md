@@ -17,10 +17,8 @@ project-root/
 │── February/
 │── MUST/
 │── PINNs/
-│── results/
-│── docs/
-│── main.py
-│── requirements.txt
+│── ezdaSS/
+│── figures/
 │── README.md
 ```
 
@@ -62,17 +60,14 @@ Helper functions from MUST shared across the repository.
 #### `/PINNs`
 Contains the Python scripts to run PINNs to extrapolate/interpolate the limited experimental data. Includes versions with/without ffe; extraction with .mat/.hpst; reduced hidden layers etc. to reduce running burdens.
 
-#### `/results`
-Description.
+#### `/ezdaSS`
+Contains further MUST modules.
 
 Example:
 Stores output images, logs, figures, reconstruction results, and experiment outputs.
 
-#### `/docs`
-Description.
-
-Example:
-Project documentation, reports, diagrams, or supplementary explanations.
+#### `/figures`
+Contains figure visualisation codes.
 
 ---
 
