@@ -82,7 +82,7 @@ lambda = 1e-3;
 [v,flag] = lsqr([H; lambda*eye(size(H,2))],[u; zeros(size(H,2),1)],1e-4,23);
 
 volume = reshape(v,Nx,Ny,Nz);
-%% 6. Volume show
+%% 6. Volume show (percentile)
 
 figure
 vmin = prctile(volume(:),1);
@@ -177,8 +177,6 @@ colormap gray
 colorbar
 title('MIP - YZ view (projection along X)')
 
-
-% Optional: improve figure layout
 sgtitle('Maximum Intensity Projections of 3D Reconstruction')
 %% Visualise voxel sensitity
 sens = reshape(sum(abs(H),1),Nx,Ny,Nz);
