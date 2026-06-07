@@ -1,7 +1,6 @@
 # Image Reconstruction Project
 
-This ImageReconstruction repository contains the Matlab/Python code developed for the data processing and image reconstruction pipelines in 
-decoding the integration of the acoustic lens with the L12-3v US linear probe.
+This ImageReconstruction repository contains the Matlab/Python code developed for the data processing and image reconstruction pipelines in decoding the integration of the acoustic lens with the Ultrasound L12-3v linear probe.
 The repository is organised into separate packages for various stages and aims of the project.
 
 ---
@@ -12,9 +11,9 @@ The repository is organised into separate packages for various stages and aims o
 project-root/
 │── 2d_das/
 │── 3D_trials/
-│── reconstruction/
-│── models/
-│── evaluation/
+│── Algorithms/
+│── Execution/
+│── Experimental/
 │── visualisation/
 │── utils/
 │── notebooks/
@@ -36,20 +35,17 @@ Contains testing from 3D DAS and moving into 3D reconstruction territory also ea
 Example:
 Contains scripts for image cleaning, normalisation, resizing, filtering, augmentation, or preparing input data before reconstruction.
 
-#### `/reconstruction`
-Description.
+#### `/Algorithms`
+Core reconstruction algorithms and descriptions for function use (inputs/outouts). Includes main methods used to reconstruct images.
 
-Example:
-Core reconstruction algorithms and pipelines. Includes methods used to reconstruct images from degraded, incomplete, or transformed inputs.
-
-#### `/models`
-Description.
+#### `/Execution`
+Scripts used to execute the reconstruction algorithms. MATLAB sections numbered and referenced both between and within scripts. Contains various unit testing of methods and sanity tests also.
 
 Example:
 Stores trained models, model architectures, or saved checkpoints used during reconstruction.
 
-#### `/evaluation`
-Description.
+#### `/Experimental`
+Contains code for processing the limited experimental data. Includes ASA.
 
 Example:
 Scripts for assessing reconstruction quality using metrics such as PSNR, SSIM, MSE, or qualitative comparisons.
