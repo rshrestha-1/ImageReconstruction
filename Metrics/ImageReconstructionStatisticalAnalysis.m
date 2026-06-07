@@ -6,10 +6,10 @@ figure;
 hold on; grid on; grid minor;
 
 % Plot cost histories (log scale for convergence clarity)
-h1 = plot(cost_en_fista, 'LineWidth', 2);
-h2 = plot(cost_en_twist, 'LineWidth', 2);
-h3 = plot(cost_fista, 'LineWidth', 2);
-h4 = plot(cost_twist, 'LineWidth', 2);
+h1 = plot(cost_fista, 'LineWidth', 2);
+h2 = plot(cost_twist, 'LineWidth', 2);
+h3 = plot(cost_en_fista, 'LineWidth', 2);
+h4 = plot(cost_en_twist, 'LineWidth', 2);
 
 % Log scale
 set(gca, 'YScale', 'log');
