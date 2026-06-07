@@ -30,17 +30,11 @@ Contains testing from the 2D DAS reconstruction period early on within autumm, r
 #### `/3D_trials`
 Contains testing from 3D DAS and moving into 3D reconstruction territory also early on, with initial trial u, H, v data.
 
-Example:
-Contains scripts for image cleaning, normalisation, resizing, filtering, augmentation, or preparing input data before reconstruction.
-
 #### `/Algorithms`
 Core reconstruction algorithms and descriptions for function use (inputs/outouts). Includes main methods used to reconstruct images.
 
 #### `/Execution`
-Scripts used to execute the reconstruction algorithms. MATLAB sections numbered and referenced both between and within scripts. Contains various unit testing of methods and sanity tests also.
-
-Example:
-Stores trained models, model architectures, or saved checkpoints used during reconstruction.
+Scripts used to execute the reconstruction algorithms. MATLAB sections numbered and referenced both between and within scripts. Contains scripts for normalisation, resizing, filtering, autoconvolution, and preparing input data for reconstruction. Contains various unit testing of methods and sanity tests.
 
 #### `/Experimental`
 Contains code for processing the limited experimental data. Includes ASA.
@@ -58,16 +52,13 @@ Contains plotting scripts and tools for displaying reconstructed images, compari
 Helper functions from MUST shared across the repository.
 
 #### `/PINNs`
-Contains the Python scripts to run PINNs to extrapolate/interpolate the limited experimental data. Includes versions with/without ffe; extraction with .mat/.hpst; reduced hidden layers etc. to reduce running burdens.
+Contains the Python scripts to run PINNs to extrapolate/interpolate the limited experimental data. Includes versions with/without ffe; extraction with .mat/HDF5; reduced hidden layers/encoded etc. to reduce instability burdens. Stores model architectures.
 
 #### `/ezdaSS`
 Contains further MUST modules.
 
-Example:
-Stores output images, logs, figures, reconstruction results, and experiment outputs.
-
 #### `/figures`
-Contains figure visualisation codes.
+Contains figure visualisation code.
 
 ---
 
@@ -75,10 +66,8 @@ Contains figure visualisation codes.
 
 - Python `x.x`
 - NumPy
-- OpenCV
-- Matplotlib
 - SciPy
-- PyTorch / TensorFlow (if applicable)
+- PyTorch
 
 Install all dependencies using:
 
