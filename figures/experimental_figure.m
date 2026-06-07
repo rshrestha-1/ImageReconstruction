@@ -33,9 +33,9 @@ titles = {'\bf Original', '\bf ASA', '\bf PINNs'};
 for i = 1:2
     k = slice_ids(i);
 
-    % =========================
+
     % Column 1: Original
-    % =========================
+
     nexttile((i-1)*3 + 1)
     imagesc(x_fine*1e3, y_fine*1e3, squeeze(V_orig_dB(:,:,k))')
     axis image
@@ -55,9 +55,9 @@ for i = 1:2
     if i == 2
         ylabel('Elevational (mm)','FontSize',12)
     end
-    % =========================
+
     % Column 2: ASA
-    % =========================
+
     nexttile((i-1)*3 + 2)
     imagesc(x_fine*1e3, y_fine*1e3, squeeze(V_ASA_dB(:,:,k))')
     axis image
@@ -70,9 +70,9 @@ for i = 1:2
     else
         title(sprintf('z = %.2f mm', z_range_asp(k)*1e3))
     end
-    % =========================
+
     % Column 3: PINNs
-    % =========================
+
     nexttile((i-1)*3 + 3)
     imagesc(x_fine*1e3, y_fine*1e3, squeeze(V_PINN_dB(:,:,k))')
     axis image
@@ -86,28 +86,28 @@ for i = 1:2
     end
 end
 
-% =========================
+
 % SHARED LABELS
-% =========================
+
 xlabel(t,'Lateral (mm)','FontSize',13)
 
-% =========================
+
 % COLORBAR (GLOBAL)
-% =========================
+
 cb = colorbar;
 cb.Layout.Tile = 'east';
 ylabel(cb,'Intensity (dB)','FontSize',12)
 cb.FontSize = 12;
 
-% =========================
+
 % UNIFORM AXIS FONT
-% =========================
+
 ax = findall(gcf,'Type','axes');
 set(ax,'FontSize',12)
 
-% =========================
+
 % ALIGN Y-LABELS
-% =========================
+
 for i = 1:length(ax)
     if strcmp(ax(i).YLabel.String,'Elevational (mm)')
         ax(i).YLabel.Units = 'normalized';
@@ -116,7 +116,5 @@ for i = 1:length(ax)
     end
 end
 
-% =========================
-% TITLE
-% =========================
+% Title
 sgtitle(sprintf('\\bf Comparison of Original, Angular Spectrum and PINNs Reconstructions'));
