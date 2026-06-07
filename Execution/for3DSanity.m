@@ -82,9 +82,8 @@ N_t = 1830; % Number of time samples for the measurement
 % Each column = flattened response of a voxel (N_elements*N_t x 1)
 H = randn(N_elements*N_t, N_voxels) * 0.1;  % small random noise
 
-% Autoconvolve H
-H = ifft2( fft2(H) .* fft2(H) );
-H = real(H);
+% Autoconvolve H externally
+
 %% Simulate measurement u using the true voxel only
 true_voxel_index = 4846;
 
@@ -199,8 +198,7 @@ voxel_positions = [x_grid(:), y_grid(:), z_grid(:)];
 
 H = H_f;
 
-% Autoconvolve H
-H = real(ifft2(fft2(H).*fft2(H)));
+% Autoconvolve H externally
 
 %% Non-simulated measurement u
 u = u_maskless;
