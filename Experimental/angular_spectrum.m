@@ -1,9 +1,14 @@
 close all; 
 clear all; 
 clc
+
 load('H_exp_new.mat');
-load('u_exp_new.mat'); %resin version
-%% VOXEL MAP USED IN EXPERIMENTAL
+load('u_exp_new.mat');
+%% 
+
+H_original = H_exp_new;
+u = u_exp_new;
+%% ORIGINAL VOXEL GRID (USED BY H)
 
 Nx = 6; 
 Ny = 6;
@@ -17,23 +22,84 @@ z_range = linspace(14e-3, 19e-3, Nz);
 
 [x_grid, y_grid, z_grid] = ndgrid(x_range, y_range, z_range);
 
-
-%% AUTOCONVOLUTION OF H
-
+%% PARAMETERS
 
 Ne = 58;
+Nt = size(H_original,1)/Ne;
 
-Nt = size(H_exp_new,1)/Ne;
+%% RESHAPE H 
 
-Hf_3D = reshape(H_exp_new, [Nt, Ne, N_voxels]);
+H_5D = reshape(H_original, [Nt, Ne, Nx, Ny, Nz]);
 
-H_conv = zeros(Ne*Nt, N_voxels);
+%% TAKE FRONT SLICE 
 
-for v = 1:N_voxels
+H_front = H_5D(:,:,:,:,1);   
+
+%% ANGULAR SPECTRUM PARAMETERS
+
+dx = 0.001;       
+dy = 0.001;
+      
+lambda = 0.2e-3; 
+
+%frequency index
+k = 2*pi/lambda; 
+
+% Fourier coordinates
+fx = (-Nx/2:Nx/2-1)/(Nx*dx);
+fy = (-Ny/2:Ny/2-1)/(Ny*dy);
+[FX,FY] = meshgrid(fx, fy);
+
+%Kz equation
+kz = sqrt(k^2 - (2*pi*FX).^2 - (2*pi*FY).^2);
+
+dz = 1e-3;  
+
+%number of slices we want to propagate to
+Nz_asp = 2;
+
+z_idx = 5; % choose your reference plane
+Hf_3D = reshape(H_original, [Nt, Ne, Nx, Ny, Nz]);
+
+H_xy = Hf_3D(:,:,:,:,z_idx);  
+% size: Nt × Ne × Nx × Ny
+
+%% PROPAGATE H USING ANGULAR SPECTRUM
+
+H_prop = zeros(Nt, Ne, Nx, Ny, Nz_asp);
+
+for t = 1:Nt
+    for e = 1:Ne
+        
+        slice0 = squeeze(H_xy(t,e,:,:)); % Nx × Ny
+        
+        F_slice = fftshift(fft2(slice0));
+        
+        for zi = 1:Nz_asp
+            F_prop = F_slice .* exp(1i * kz * dz * zi);
+            H_prop(t,e,:,:,zi) = ifft2(ifftshift(F_prop));
+        end
+        
+    end
+end
+
+%% RESHAPE BACK
+
+N_voxels_new = Nx*Ny*Nz_asp;
+
+%% AUTOCONVOLUTION OF H 
+
+H_conv = zeros(Ne*Nt, N_voxels_new);
+Hf_3D = reshape(H_prop, [Nt, Ne, N_voxels_new]);
+
+
+for v = 1:N_voxels_new
+    
     for e = 1:Ne
       
         h_tx = Hf_3D(:, e, v);
-
+        
+        % autoconvolution
         h_echo_full = conv(h_tx, h_tx);
         
         % truncate
@@ -45,168 +111,114 @@ for v = 1:N_voxels
         % put into initialised H
         row_start = (e-1)*Nt + 1;
         row_end   = e*Nt;
-        H_conv(row_start:row_end, v) = h_echo; 
+        
+        H_conv(row_start:row_end, v) = h_echo;
+        
     end
 end
+%% 
 
+z_range_asp = z_range(5) + (1:Nz_asp)*dz;
 
+%% LSQR RECONSTRUCTION
+% col_norms = sqrt(sum(H_conv.^2,1));
+% Hn = H_conv ./ col_norms;
 
-%% Band-pass filtering 
-% Fs = 30e6;                 
-% u_filtered = zeros(size(u_exp_new));
-% 
-% bpFilt = designfilt('bandpassfir', 'FilterOrder', 100, 'CutoffFrequency1', 3e6,'CutoffFrequency2', 12e6,'SampleRate', Fs);
-% 
-% for k = 1:size(u_exp_new,2)
-%     u_filtered(:,k) = filtfilt(bpFilt, u_exp_new(:,k)); 
-% end
+%% 
 
-%% LSQR TO GET V
-
-
-maxIter = 19;
+maxIter = 15;
 tol = 1e-8;
-lamdba = e-5;
-lamdba_2 = e-10;
 
-% v = twist_bpdn(H_conv, u_exp_new, lamdba,maxIter, tol);
-%v = twist_elastic(H_conv, u_exp_new, lamdba,lamdba_2,maxIter, tol);
-%v = fista_lasso(H_conv, u_exp_new, lambda, maxIter, tol);
-%v = fista_elastic(H_conv, u_exp_new, lamdba,lamdba_2, maxIter, tol);
+v = lsqr(H_conv, u, tol, maxIter);
 
-v = lsqr(H_conv, u_exp_new, tol, maxIter);
+%% RESHAPE RESULT
 
-%% RESHAPE V
-V = reshape(abs(v), Nx, Ny, Nz);
+V = reshape(abs(v), Nx, Ny, Nz_asp);
 
-%% NEW FINE GRID
+%% DISPLAY RESULT
 
-Nx_fine = 18;
-Ny_fine = 18;
-Nz_fine = 6;
+V_env_1 = abs(V);
+
+% --- Normalise
+V_env_1 = V_env_1 / max(V_env_1(:));
+
+% --- Log compression (B-mode style)
+dynamic_range_dB = 10;   % typical ultrasound range
+V_dB = 20*log10(V_env_1 + eps);  % avoid log(0)
+
+% Clip dynamic range
+V_dB(V_dB < -dynamic_range_dB) = -dynamic_range_dB;
+
+% Plot all depth slices
+
+figure;
+
+for k = 1:Nz_asp
+    
+    subplot(ceil(Nz_asp/4), 4, k)  % 4 slices per row
+    
+    imagesc(x_range*1e3, y_range*1e3, squeeze(V_dB(:,:,k))')
+    
+    axis image
+    set(gca,'YDir','normal')   % standard Cartesian
+    colormap(gray)
+    caxis([-dynamic_range_dB 0])
+    datacursormode on
+    title(sprintf('z = %.2f mm, at slice = %d', z_range_asp(k)*1e3, k))
+    
+    if k == 1
+        xlabel('x (mm)')
+        ylabel('y (mm)')
+    end
+end
+sgtitle(['Reconstruction with ' num2str(maxIter) ' iterations and ' num2str(dynamic_range_dB) 'dB (trial 3)' ])
+%% Original 3D voxel volume
+
+Nx_fine = 20;
+Ny_fine = 20;
+Nz_fine = 20;
 
 x_fine = linspace(min(x_range), max(x_range), Nx_fine);
 y_fine = linspace(min(y_range), max(y_range), Ny_fine);
-z_fine = linspace(min(z_range), max(z_range), Nz_fine);
-
+z_fine = linspace(min(z_range_asp), max(z_range_asp), Nz_fine);
+[x_grid, y_grid, z_grid] = ndgrid(x_range, y_range, z_range_asp);
 [xq, yq, zq] = ndgrid(x_fine, y_fine, z_fine);
 
+V_angular = interpn(x_grid, y_grid, z_grid, V, xq, yq, zq, 'linear', 0);
+%% 
 
-%interpolate to the new grid
-V = interpn(x_grid, y_grid, z_grid, V, xq, yq, zq, 'linear'); 
+V_env_1 = abs(V_angular);
 
-%% ANGULAR APPROACH
-
-%spacing between x voxels
-dx = 0.001;       
-dy = 0.001;
-      
-lambda = 0.2e-3; 
-
-%frequency index
-k = 2*pi/lambda; 
-
-% Fourier coordinates
-fx = (-Nx_fine/2:Nx_fine/2-1)/(Nx_fine*dx);
-fy = (-Ny_fine/2:Ny_fine/2-1)/(Ny_fine*dy);
-[FX,FY] = meshgrid(fx, fy);
-
-%Kz equation
-kz = sqrt(k^2 - (2*pi*FX).^2 - (2*pi*FY).^2);
-
-dz = 1e-3;  
-
-%number of slices we want to propagate to
-Nz_asp = 2;
-
-V_asp = zeros(Nx_fine, Ny_fine, Nz_asp);
-ind = 1;
-
-%reference slice
-slice0 = V(:,:,ind);
-
-for zi = 1:Nz_asp
-
-    F_slice = fftshift(fft2(slice0)); %take fourier transform
-
-    F_slice_prop = F_slice .* exp(1i * kz * dz * zi); %find fourier transform of V for next slice
-
-    V_asp(:,:,zi) = abs(ifft2(ifftshift(F_slice_prop))); %inverse fourier
-end
-
-%new z range
-z_range_asp = z_range(ind) + (1:Nz_asp)*dz;
-
-%% IMAGE AFTER ANGULAR APPRAOCH
-
-V_env_1 = abs(V_asp);
+% --- Normalise
 V_env_1 = V_env_1 / max(V_env_1(:));
 
-% Log compression (B-mode style)
-dynamic_range_dB = 15;  
-V_dB = 20*log10(V_env_1 + eps);  
+% --- Log compression (B-mode style)
+dynamic_range_dB = 15;   % typical ultrasound range
+V_dB = 20*log10(V_env_1 + eps);  % avoid log(0)
+
 % Clip dynamic range
 V_dB(V_dB < -dynamic_range_dB) = -dynamic_range_dB;
-% Plot
+
+% Plot all depth slices
+
 figure;
+
 for k = 1:Nz_asp
-    subplot(ceil(Nz_asp/4), 4, k); 
-    imagesc(x_fine*1e3, y_fine*1e3, squeeze(V_dB(:,:,k))');
+    
+    subplot(ceil(Nz_asp/4), 4, k)  % 4 slices per row
+    
+    imagesc(x_fine*1e3, y_fine*1e3, squeeze(V_dB(:,:,k))')
+    
     axis image
-    set(gca,'YDir','normal');   
+    set(gca,'YDir','normal')   % standard Cartesian
     colormap(gray)
-    clim([-dynamic_range_dB 0]);
+    caxis([-dynamic_range_dB 0])
     datacursormode on
-    title(sprintf('z = %.2f mm, at slice = %d', z_range_asp(k)*1e3, k));
+    title(sprintf('z = %.2f mm, at slice = %d', z_range_asp(k)*1e3, k))
     
     if k == 1
         xlabel('x (mm)')
         ylabel('y (mm)')
     end
 end
-
-sgtitle(['Reconstruction with ' num2str(maxIter) ' iterations and ' num2str(dynamic_range_dB) 'dB' ])
-%% ORIGINAL IMAGE BEFORE ANGULAR
-
-
-V_env_1 = abs(V);
-V_env_1 = V_env_1 / max(V_env_1(:));
-
-% Log compression (B-mode style)
-dynamic_range_dB = 10;  
-V_dB = 20*log10(V_env_1 + eps);  
-% Clip dynamic range
-V_dB(V_dB < -dynamic_range_dB) = -dynamic_range_dB;
-% Plot
-figure;
-for k = 1:Nz_fine
-    subplot(ceil(Nz/4), 4, k); 
-    imagesc(x_fine*1e3, y_fine*1e3, squeeze(V_dB(:,:,k))');
-    axis image
-    set(gca,'YDir','normal');   
-    colormap(gray)
-    clim([-dynamic_range_dB 0]);
-    datacursormode on
-    title(sprintf('z = %.2f mm, at slice = %d', z_fine(k)*1e3, k));
-    
-    if k == 1
-        xlabel('x (mm)')
-        ylabel('y (mm)')
-    end
-end
-
-sgtitle(['Reconstruction with ' num2str(maxIter) ' iterations and ' num2str(dynamic_range_dB) 'dB' ])
-
-%% Check if H has imaginary values
-
-if ~isreal(H_exp_new)
-    disp('H contains imaginary data')
-    
-    % Count elements with imaginary part
-    numComplex = sum(abs(imag(H_exp_new(:))) > 1e-12); % use threshold to catch tiny floating-point values
-    
-    % Correct way to print formatted text
-    fprintf('Number of elements with imaginary part: %d\n', numComplex)
-else
-    disp('H is purely real')
-end
+sgtitle(['Reconstruction with ' num2str(maxIter) ' iterations and ' num2str(dynamic_range_dB) 'dB ' ])
